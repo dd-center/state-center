@@ -1,0 +1,2 @@
+# log
+The log manager
