@@ -30,6 +30,7 @@ io.on('connect', socket => {
     socket.on('disconnect', () => {
       clients.delete(name)
       clientsStats.delete(name)
+      console.log(name, 'disconnect')
     })
   }
 })
