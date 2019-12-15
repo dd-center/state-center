@@ -1,7 +1,7 @@
 const Server = require('socket.io')
 const io = new Server(9200, { serveClient: false })
 
-let clients = new Map()
+const clients = new Map()
 
 io.on('connect', socket => {
   const { name } = socket.handshake.query
@@ -25,3 +25,5 @@ io.on('connect', socket => {
     })
   }
 })
+
+module.exports = io
