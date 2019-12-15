@@ -1,3 +1,4 @@
+const EventEmitter = require('events')
 const io = require('socket.io-client')
 
 const { port } = require('./config')
@@ -6,26 +7,37 @@ const baseURL = new URL('http://0.0.0.0')
 
 baseURL.port = port
 
-class CState extends io {
+class CState extends EventEmitter {
   /**
    * @param { { name:string, group:string } | string } option
    */
   constructor(option) {
+    super()
+
     if (typeof option === 'string') {
-      super(option)
+      this.socket = io(option)
     } else {
       const { name = 'unknow', group = 'unknow' } = option
       const url = new URL(baseURL)
       url.searchParams.set('name', name)
       url.searchParams.set('group', group)
-      super(url.href)
+      this.socket = io(url.href)
     }
 
-    setInterval(() => {
+    this.liveInterval = setInterval(() => {
+      // console.log(233)
       if (this.connected) {
-        this.emit('uptime', process.uptime())
+        this.socket.emit('uptime', process.uptime())
       }
-    }, 1)
+    }, 1000)
+
+    const socket = this.socket
+    socket.on('connect', () => this.emit('connect'))
+  }
+
+  close = () => {
+    clearInterval(this.liveInterval)
+    this.socket.close()
   }
 }
 
