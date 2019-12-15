@@ -1,5 +1,8 @@
 const Server = require('socket.io')
-const io = new Server(9200, { serveClient: false })
+
+const { port } = require('./config')
+
+const io = new Server(port, { serveClient: false })
 
 const clients = new Map()
 
