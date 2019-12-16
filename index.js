@@ -1,12 +1,19 @@
 const Server = require('socket.io')
 
 const { port } = require('./config')
+const CState = require('./api')
 
 const io = new Server(port, { serveClient: false })
 
 const clients = new Map()
 
 const clientsStats = new Map()
+
+const stateCState = new CState({ name: 'state' })
+
+stateCState.stateRoute({
+  clients: () => [...clients.keys()]
+})
 
 io.on('connect', socket => {
   const { name } = socket.handshake.query
@@ -35,14 +42,13 @@ io.on('connect', socket => {
       }
     })
     socket.on('stats', stats => clientsStats.set(name, { ...clientsStats.get(name), ...stats, lastSeen: Date.now() }))
-    console.log(name, 'connected')
+    stateCState.log('connected', { name })
     socket.on('disconnect', () => {
       clients.delete(name)
       clientsStats.delete(name)
-      console.log(name, 'disconnect')
+      stateCState.log('disconnect', { name })
     })
   }
 })
 
-// TODO: REMOVE export of { clients, clientsStats }
-module.exports = { io, clients, clientsStats }
+module.exports = { io, stateCState }

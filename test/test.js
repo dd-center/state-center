@@ -5,7 +5,7 @@
 const { once } = require('events')
 const { assert } = require('chai')
 
-const { io, clients } = require('..')
+const { io, stateCState } = require('..')
 const CState = require('../api')
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -19,15 +19,16 @@ describe('State Center', function() {
 
   context('api', function() {
     const runner = new CState({ name: 'runner' })
+    const stateAsker = runner.ask('state')
 
     it('connect and disconnect with name', async function() {
       const cState = new CState({ name: 'test' })
       await once(cState, 'connect')
       await wait(10)
-      assert.isTrue(clients.has('test'))
+      assert.isTrue((await stateAsker('clients')).includes('test'))
       cState.close()
       await wait(500)
-      assert.isFalse(clients.has('test'))
+      assert.isFalse((await stateAsker('clients')).includes('test'))
     })
 
     context('join()', function() {
@@ -78,5 +79,6 @@ describe('State Center', function() {
 
   after(function() {
     io.close()
+    stateCState.close()
   })
 })
