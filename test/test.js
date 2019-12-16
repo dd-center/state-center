@@ -60,6 +60,17 @@ describe('State Center', function() {
       assert.strictEqual(result, 233)
     })
 
+    it('query()', async function() {
+      const name = 'answer'
+      const num = 233
+      const cState = new CState({ name })
+      cState.queryRoute({ plus: n => n + 1 })
+      await wait(10)
+      const result = await runner.query(name)('plus')(num)
+      cState.close()
+      assert.strictEqual(result, num + 1)
+    })
+
     after(function() {
       runner.close()
     })

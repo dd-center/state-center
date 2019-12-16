@@ -25,6 +25,15 @@ io.on('connect', socket => {
         }
       }
     })
+    socket.on('query', ({ name, key, params }, ack) => {
+      if (typeof ack === 'function') {
+        if (clients.has(name)) {
+          clients.get(name).emit('query', { key, params }, ack)
+        } else {
+          ack(undefined)
+        }
+      }
+    })
     socket.on('stats', stats => clientsStats.set(name, { ...clientsStats.get(name), ...stats, lastSeen: Date.now() }))
     console.log(name, 'connected')
     socket.on('disconnect', () => {
