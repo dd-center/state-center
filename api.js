@@ -28,7 +28,7 @@ class CState extends EventEmitter {
 
     this.liveInterval = setInterval(() => {
       if (this.socket.connected) {
-        this.socket.emit('stats', { uptime: process.uptime() })
+        this.update({ uptime: process.uptime() })
       }
     }, 1000)
 
@@ -82,6 +82,10 @@ class CState extends EventEmitter {
    * @param { string } name
    */
   query = name => key => (...params) => new Promise(resolve => this.socket.emit('query', { name, key, params }, resolve))
+  /**
+   * @param { object } stats
+   */
+  update = stats => this.socket.emit('stats', stats)
 }
 
 module.exports = CState

@@ -20,6 +20,7 @@ describe('State Center', function() {
   context('api', function() {
     const runner = new CState({ name: 'runner' })
     const stateAsker = runner.ask('state')
+    const stateQuerier = runner.query('state')
 
     it('connect and disconnect with name', async function() {
       const cState = new CState({ name: 'test' })
@@ -87,7 +88,6 @@ describe('State Center', function() {
       })
 
       context('query', function() {
-        const stateQuerier = runner.query('state')
         it('stats', async function() {
           const runnerStats = await stateQuerier('stats')('runner')
           assert.isObject(runnerStats)
@@ -102,6 +102,17 @@ describe('State Center', function() {
           assert.isNumber(runnerStats.lastSeen)
         })
       })
+    })
+
+    it('update()', async function() {
+      const name = 'c'
+      const k = 233
+      const cState = new CState({ name })
+      cState.update({ k })
+      await wait(10)
+      const cStats = await stateQuerier('stats')(name)
+      cState.close()
+      assert.strictEqual(cStats.k, k)
     })
 
     after(function() {
