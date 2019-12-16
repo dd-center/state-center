@@ -27,9 +27,8 @@ class CState extends EventEmitter {
     this.queryTable = {}
 
     this.liveInterval = setInterval(() => {
-      // console.log(233)
-      if (this.connected) {
-        this.socket.emit('uptime', process.uptime())
+      if (this.socket.connected) {
+        this.socket.emit('stats', { uptime: process.uptime() })
       }
     }, 1000)
 

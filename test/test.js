@@ -72,6 +72,38 @@ describe('State Center', function() {
       assert.strictEqual(result, num + 1)
     })
 
+    context('state center api', function() {
+      context('state', function() {
+        it('clients', async function() {
+          const clients = await stateAsker('clients')
+          assert.isArray(clients)
+          assert.isAbove(clients.length, 0)
+        })
+        it('stats', async function() {
+          const clientsStats = await stateAsker('stats')
+          assert.isObject(clientsStats)
+          assert.isAbove(Object.keys(clientsStats).length, 0)
+        })
+      })
+
+      context('query', function() {
+        const stateQuerier = runner.query('state')
+        it('stats', async function() {
+          const runnerStats = await stateQuerier('stats')('runner')
+          assert.isObject(runnerStats)
+        })
+        it('stats.uptime', async function() {
+          await wait(1000)
+          const runnerStats = await stateQuerier('stats')('runner')
+          assert.isNumber(runnerStats.uptime)
+        })
+        it('stats.lastSeen', async function() {
+          const runnerStats = await stateQuerier('stats')('runner')
+          assert.isNumber(runnerStats.lastSeen)
+        })
+      })
+    })
+
     after(function() {
       runner.close()
     })

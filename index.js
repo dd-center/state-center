@@ -12,7 +12,12 @@ const clientsStats = new Map()
 const stateCState = new CState({ name: 'state' })
 
 stateCState.stateRoute({
-  clients: () => [...clients.keys()]
+  clients: () => [...clients.keys()],
+  stats: () => Object.fromEntries([...clientsStats.entries()])
+})
+
+stateCState.queryRoute({
+  stats: name => clientsStats.get(name)
 })
 
 io.on('connect', socket => {
