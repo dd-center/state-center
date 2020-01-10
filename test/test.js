@@ -32,6 +32,16 @@ describe('State Center', function() {
       assert.isFalse((await stateAsker('clients')).includes('test'))
     })
 
+    it('connect and disconnect with url', async function() {
+      const cState = new CState('http://0.0.0.0:9200?name=hi')
+      await once(cState, 'connect')
+      await wait(10)
+      assert.isTrue((await stateAsker('clients')).includes('hi'))
+      cState.close()
+      await wait(500)
+      assert.isFalse((await stateAsker('clients')).includes('hi'))
+    })
+
     context('join()', function() {
       runner.join('all')
 
@@ -62,6 +72,11 @@ describe('State Center', function() {
       assert.strictEqual(result, 233)
     })
 
+    it('ask() -> null', async function() {
+      const result = await runner.ask('who?')('www')
+      assert.isNull(result)
+    })
+
     it('query()', async function() {
       const name = 'answer'
       const num = 233
@@ -71,6 +86,11 @@ describe('State Center', function() {
       const result = await runner.query(name)('plus')(num)
       cState.close()
       assert.strictEqual(result, num + 1)
+    })
+
+    it('query() -> null', async function() {
+      const result = await runner.query('who?')('plus')(233)
+      assert.isNull(result)
     })
 
     context('state center api', function() {
