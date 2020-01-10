@@ -47,6 +47,7 @@ io.on('connect', socket => {
       }
     })
     socket.on('stats', stats => clientsStats.set(name, { ...clientsStats.get(name), ...stats, lastSeen: Date.now() }))
+    socket.on('event', (...params) => io.to(name).emit('event', name, ...params))
     stateCState.log('connected', { name })
     socket.on('disconnect', () => {
       clients.delete(name)

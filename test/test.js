@@ -2,8 +2,10 @@
 /* global context */
 /* global it */
 /* global after */
-const { once } = require('events')
+const EventEmitter = require('events')
 const { assert } = require('chai')
+
+const { once } = EventEmitter
 
 const { io, stateCState } = require('..')
 const CState = require('../api')
@@ -91,6 +93,51 @@ describe('State Center', function() {
     it('query() -> null', async function() {
       const result = await runner.query('who?')('plus')(233)
       assert.isNull(result)
+    })
+
+    it('subscribe()', function() {
+      const cState = new CState({ name: 'subs' })
+      const emitter = cState.subscribe('nice')
+      cState.close()
+      assert.instanceOf(emitter, EventEmitter)
+    })
+
+    it('subscribe() x2', function() {
+      const cState = new CState({ name: 'subs' })
+      const emitter = cState.subscribe('nice')
+      const emitter2 = cState.subscribe('nice')
+      cState.close()
+      assert.strictEqual(emitter, emitter2)
+    })
+
+    it('publish/subscribe', async function() {
+      const subState = new CState({ name: 'sub' })
+      const pubEmitter = subState.subscribe('pub')
+      const pubState = new CState({ name: 'pub' })
+      const aPublisher = pubState.publish('a')
+      await wait(10)
+      aPublisher(233)
+      const [num] = await once(pubEmitter, 'a')
+      subState.close()
+      pubState.close()
+      assert.strictEqual(num, 233)
+    })
+
+    it('publish/subscribe after close', async function() {
+      const subState = new CState({ name: 'sub' })
+      const pubEmitter = subState.subscribe('pub')
+      const pubState = new CState({ name: 'pub' })
+      const aPublisher = pubState.publish('a')
+      await wait(100)
+      subState.close()
+      await wait(100)
+      subState.open()
+      await wait(100)
+      aPublisher(233)
+      const [num] = await once(pubEmitter, 'a')
+      subState.close()
+      pubState.close()
+      assert.strictEqual(num, 233)
     })
 
     context('state center api', function() {
