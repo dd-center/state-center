@@ -1,16 +1,11 @@
-/* global describe */
-/* global context */
-/* global it */
-/* global after */
-const EventEmitter = require('events')
-const { assert } = require('chai')
+import { EventEmitter } from 'events'
+import { assert } from 'chai'
+import { io, stateCState } from '../src'
+import CState from '../src/api'
 
 const { once } = EventEmitter
 
-const { io, stateCState } = require('..')
-const CState = require('../api')
-
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 describe('State Center', function() {
   context('state.io', function() {
@@ -173,13 +168,13 @@ describe('State Center', function() {
 
     it('update()', async function() {
       const name = 'c'
-      const k = 233
+      const lastSeen = 233
       const cState = new CState({ name })
-      cState.update({ k })
+      cState.update({ lastSeen })
       await wait(10)
       const cStats = await stateQuerier('stats')(name)
       cState.close()
-      assert.strictEqual(cStats.k, k)
+      assert.strictEqual(cStats.lastSeen, lastSeen)
     })
 
     after(function() {
