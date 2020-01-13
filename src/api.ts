@@ -51,30 +51,24 @@ export default class CState extends EventEmitter {
     })
 
     socket.on('state', async (key: string, ack: (value: any) => void) => {
-      if (typeof ack === 'function') {
-        ack(await this.stateTable[key]?.())
-      }
+      ack?.(await this.stateTable[key]?.())
     })
 
-    socket.on('query', async ({ key, params }, ack: (value: any) => void) => {
-      if (typeof ack === 'function') {
-        ack(await this.queryTable[key]?.(...params))
-      }
+    socket.on('query', async ({ key, params }: any, ack: (value: any) => void) => {
+      ack?.(await this.queryTable[key]?.(...params))
     })
 
-    socket.on('event', (...params) => {
+    socket.on('event', (...params: any[]) => {
       this.emit('event', ...params)
     })
 
-    socket.on('event', (name, event, ...params) => {
-      if (emitters.has(name)) {
-        emitters.get(name).emit(event, ...params)
-      }
+    socket.on('event', (name: string, event: string, ...params: any[]) => {
+      emitters.get(name)?.emit(event, ...params)
     })
 
-    socket.on('log', (...params) => this.emit('log', ...params))
+    socket.on('log', (...params: string[]) => this.emit('log', ...params))
 
-    socket.on('error', (...params) => this.emit('error', ...params))
+    socket.on('error', (...params: string[]) => this.emit('error', ...params))
 
     this.open()
   }
@@ -128,7 +122,7 @@ export default class CState extends EventEmitter {
 
   update = (stats: object) => this.socket.emit('stats', stats)
 
-  publish = (eventName: string) => (...params) => {
+  publish = (eventName: string) => (...params: string[]) => {
     this.socket.emit('event', eventName, ...params)
   }
 

@@ -5,6 +5,7 @@
     "composite": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "noImplicitAny": true,
     "incremental": true,
     "outDir": "dist"
   },
