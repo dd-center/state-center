@@ -66,9 +66,9 @@ export default class CState extends EventEmitter {
       emitters.get(name)?.emit(event, ...params)
     })
 
-    socket.on('log', (...params: string[]) => this.emit('log', ...params))
+    socket.on('log', (...params: any[]) => this.emit('log', ...params))
 
-    socket.on('error', (...params: string[]) => this.emit('error', ...params))
+    socket.on('error', (...params: any[]) => this.emit('error', ...params))
 
     this.open()
   }
@@ -110,7 +110,7 @@ export default class CState extends EventEmitter {
     }
   }
 
-  query = <T = any>(name: string) => {
+  query = (name: string) => {
     return <T extends keyof QueryTable>(key: T) => {
       return (...params: Parameters<QueryTable[T]>) => {
         return new Promise<ReturnType<QueryTable[T]>>((resolve) => {
@@ -122,7 +122,7 @@ export default class CState extends EventEmitter {
 
   update = (stats: object) => this.socket.emit('stats', stats)
 
-  publish = (eventName: string) => (...params: string[]) => {
+  publish = (eventName: string) => (...params: any[]) => {
     this.socket.emit('event', eventName, ...params)
   }
 
