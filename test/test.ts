@@ -168,13 +168,14 @@ describe('State Center', function() {
 
     it('update()', async function() {
       const name = 'c'
-      const lastSeen = 233
+      const k = 233
       const cState = new CState({ name })
-      cState.update({ lastSeen })
+      cState.update({ k })
       await wait(10)
       const cStats = await stateQuerier('stats')(name)
       cState.close()
-      assert.strictEqual(cStats.lastSeen, lastSeen)
+      // @ts-ignore
+      assert.strictEqual(cStats.k, k)
     })
 
     after(function() {
