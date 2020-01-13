@@ -1,5 +1,7 @@
 {
   "name": "state-center",
+  "private": true,
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc -b",
     "coverage": "mkdir coverage; nyc report --reporter=text-lcov >> ./coverage/lcov.info",
