@@ -2,8 +2,6 @@ import SocketIO, { Socket } from 'socket.io'
 import CState from './api'
 import { port } from './config'
 
-export { CState }
-
 export const io = SocketIO(port, {
   serveClient: false,
 })

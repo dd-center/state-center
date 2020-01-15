@@ -1,4 +1,8 @@
-/dist
+api.js
+src/*.js
+index.js
+**/*.d.ts
+test/*.js
 
 # Logs
 logs

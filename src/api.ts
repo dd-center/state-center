@@ -6,12 +6,12 @@ const baseURL = new URL(`http://0.0.0.0:${port}`)
 
 interface CStateOption {
   name: string
-  group?: string 
+  group?: string
 }
 
-export interface StateTable extends Record<string, () => any> {}
+export interface StateTable extends Record<string, () => any> { }
 
-export interface QueryTable extends Record<string, (...params: any[]) => any> {}
+export interface QueryTable extends Record<string, (...params: any[]) => any> { }
 
 export default class CState extends EventEmitter {
   stateTable: StateTable = {}
@@ -21,7 +21,7 @@ export default class CState extends EventEmitter {
   socket: typeof Socket
   liveInterval: NodeJS.Timeout
 
-  constructor (option: string | CStateOption) {
+  constructor(option: string | CStateOption) {
     super()
 
     if (typeof option === 'string') {
