@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -b",
     "coverage": "mkdir coverage; nyc report --reporter=text-lcov >> ./coverage/lcov.info",
-    "test": "npm run unit",
+    "test": "npm run clear; npm run unit",
+    "clear": "rm index.js index.d.ts api.js api.d.ts src/*.js src/*.d.ts test/*.d.ts test/*.js;exit 0",
     "unit": "nyc mocha --reporter=landing -r ts-node/register test/*.ts"
   },
   "devDependencies": {
