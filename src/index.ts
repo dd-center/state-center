@@ -84,3 +84,5 @@ io.on('connect', socket => {
     stateCState.log('disconnect', { name })
   })
 })
+
+console.log('State is here!')
