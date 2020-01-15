@@ -2,7 +2,7 @@
   "name": "state-center",
   "version": "1.0.0",
   "private": true,
-  "main": "src/index.ts",
+  "main": "./api.js",
   "scripts": {
     "build": "tsc -b",
     "coverage": "mkdir coverage; nyc report --reporter=text-lcov >> ./coverage/lcov.info",
