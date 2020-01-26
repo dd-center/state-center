@@ -1,25 +1,23 @@
-import { EventEmitter } from 'events'
+import { EventEmitter, once } from 'events'
 import { assert } from 'chai'
 import { io, stateCState } from '../src'
 import CState from '../src/api'
 
-const { once } = EventEmitter
-
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-describe('State Center', function () {
-  context('state.io', function () {
-    it('io is object', function () {
+describe('State Center', function() {
+  context('state.io', function() {
+    it('io is object', function() {
       assert.isObject(io)
     })
   })
 
-  context('api', function () {
+  context('api', function() {
     const runner = new CState({ name: 'runner' })
     const stateAsker = runner.ask('state')
     const stateQuerier = runner.query('state')
 
-    it('connect and disconnect with name', async function () {
+    it('connect and disconnect with name', async function() {
       const cState = new CState({ name: 'test' })
       await once(cState, 'connect')
       await wait(10)
@@ -29,7 +27,7 @@ describe('State Center', function () {
       assert.isFalse((await stateAsker('clients')).includes('test'))
     })
 
-    it('connect and disconnect with url', async function () {
+    it('connect and disconnect with url', async function() {
       const cState = new CState('http://0.0.0.0:9200?name=hi')
       await once(cState, 'connect')
       await wait(10)
@@ -39,10 +37,10 @@ describe('State Center', function () {
       assert.isFalse((await stateAsker('clients')).includes('hi'))
     })
 
-    context('join()', function () {
+    context('join()', function() {
       runner.join('all')
 
-      it('log()', async function () {
+      it('log()', async function() {
         const name = 'tester'
         const cState = new CState({ name })
         await wait(10)
@@ -59,7 +57,7 @@ describe('State Center', function () {
       })
     })
 
-    it('ask()', async function () {
+    it('ask()', async function() {
       const name = 'answer'
       const cState = new CState({ name })
       cState.stateRoute({ testQ: () => Promise.resolve(233) })
@@ -69,12 +67,12 @@ describe('State Center', function () {
       assert.strictEqual(result, 233)
     })
 
-    it('ask() -> null', async function () {
+    it('ask() -> null', async function() {
       const result = await runner.ask('who?')('www')
       assert.isNull(result)
     })
 
-    it('query()', async function () {
+    it('query()', async function() {
       const name = 'answer'
       const num = 233
       const cState = new CState({ name })
@@ -85,19 +83,19 @@ describe('State Center', function () {
       assert.strictEqual(result, num + 1)
     })
 
-    it('query() -> null', async function () {
+    it('query() -> null', async function() {
       const result = await runner.query('who?')('plus')(233)
       assert.isNull(result)
     })
 
-    it('subscribe()', function () {
+    it('subscribe()', function() {
       const cState = new CState({ name: 'subs' })
       const emitter = cState.subscribe('nice')
       cState.close()
       assert.instanceOf(emitter, EventEmitter)
     })
 
-    it('subscribe() x2', function () {
+    it('subscribe() x2', function() {
       const cState = new CState({ name: 'subs' })
       const emitter = cState.subscribe('nice')
       const emitter2 = cState.subscribe('nice')
@@ -105,7 +103,7 @@ describe('State Center', function () {
       assert.strictEqual(emitter, emitter2)
     })
 
-    it('publish/subscribe', async function () {
+    it('publish/subscribe', async function() {
       const subState = new CState({ name: 'sub' })
       const pubEmitter = subState.subscribe('pub')
       const pubState = new CState({ name: 'pub' })
@@ -118,7 +116,7 @@ describe('State Center', function () {
       assert.strictEqual(num, 233)
     })
 
-    it('publish/subscribe after close', async function () {
+    it('publish/subscribe after close', async function() {
       this.retries(5)
       const subState = new CState({ name: 'sub233' })
       const pubEmitter = subState.subscribe('pub233')
@@ -136,38 +134,38 @@ describe('State Center', function () {
       assert.strictEqual(num, 233)
     })
 
-    context('state center api', function () {
-      context('state', function () {
-        it('clients', async function () {
+    context('state center api', function() {
+      context('state', function() {
+        it('clients', async function() {
           const clients = await stateAsker('clients')
           assert.isArray(clients)
           assert.isAbove(clients.length, 0)
         })
-        it('stats', async function () {
+        it('stats', async function() {
           const clientsStats = await stateAsker('stats')
           assert.isObject(clientsStats)
           assert.isAbove(Object.keys(clientsStats).length, 0)
         })
       })
 
-      context('query', function () {
-        it('stats', async function () {
+      context('query', function() {
+        it('stats', async function() {
           const runnerStats = await stateQuerier('stats')('runner')
           assert.isObject(runnerStats)
         })
-        it('stats.uptime', async function () {
+        it('stats.uptime', async function() {
           await wait(1000)
           const runnerStats = await stateQuerier('stats')('runner')
           assert.isNumber(runnerStats.uptime)
         })
-        it('stats.lastSeen', async function () {
+        it('stats.lastSeen', async function() {
           const runnerStats = await stateQuerier('stats')('runner')
           assert.isNumber(runnerStats.lastSeen)
         })
       })
     })
 
-    it('update()', async function () {
+    it('update()', async function() {
       const name = 'c'
       const k = 233
       const cState = new CState({ name })
@@ -179,12 +177,12 @@ describe('State Center', function () {
       assert.strictEqual(cStats.k, k)
     })
 
-    after(function () {
+    after(function() {
       runner.close()
     })
   })
 
-  after(function () {
+  after(function() {
     io.close()
     stateCState.close()
   })
