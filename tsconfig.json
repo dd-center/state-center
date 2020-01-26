@@ -5,12 +5,13 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
+    "composite": true
   },
   "include": [
     "src"
   ],
   "files": [
-  "./index.ts",
-  "./api.ts"
+    "./index.ts",
+    "./api.ts"
   ]
 }
