@@ -46,6 +46,7 @@ io.on('connect', socket => {
 
   socket.on('log', data => {
     io.to('all').to('log').to(name).emit('log', { name, data })
+    console.log('log', { name }, data)
   })
 
   socket.on('join', room => socket.join(room))
