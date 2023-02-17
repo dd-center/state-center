@@ -46,6 +46,8 @@ io.on('connect', socket => {
   clients.set(name, socket)
   clientsStats.set(name, { lastSeen: Date.now() })
 
+  console.log('hi', name)
+
   socket.on('log', data => {
     io.to('all').to('log').to(name).emit('log', { name, data })
   })
