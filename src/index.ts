@@ -1,9 +1,10 @@
-import SocketIO, { Socket } from 'socket.io'
+import { Socket, Server } from 'socket.io'
 import CState from './api'
 import { port } from './config'
 
-export const io = SocketIO(port, {
+export const io = new Server(port, {
   serveClient: false,
+  allowEIO3: true,
 })
 
 const clients = new Map<string, Socket>()
@@ -38,7 +39,8 @@ stateCState.queryRoute({
 })
 
 io.on('connect', socket => {
-  const { name } = socket.handshake.query
+  let { name: nameMaybeArray } = socket.handshake.query
+  const name = Array.isArray(nameMaybeArray) ? nameMaybeArray[0] : nameMaybeArray
   if (!name || clients.has(name)) return
 
   clients.set(name, socket)

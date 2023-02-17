@@ -18,7 +18,7 @@ export default class CState extends EventEmitter {
   queryTable: QueryTable = {}
   emitters = new Map<string, EventEmitter>()
   joins = new Set()
-  socket: typeof Socket
+  socket: Socket
   liveInterval: NodeJS.Timeout
 
   constructor(option: string | CStateOption) {
