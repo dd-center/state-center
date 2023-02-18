@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import { port } from './config'
-import io, { Socket } from 'socket.io-client'
+import io from 'socket.io-client'
 
 const baseURL = new URL(`http://0.0.0.0:${port}`)
 
@@ -18,7 +18,7 @@ export default class CState extends EventEmitter {
   queryTable: QueryTable = {}
   emitters = new Map<string, EventEmitter>()
   joins = new Set()
-  socket: Socket
+  socket: ReturnType<typeof io>
   liveInterval: NodeJS.Timeout
 
   constructor(option: string | CStateOption) {
