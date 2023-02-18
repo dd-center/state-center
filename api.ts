@@ -1,2 +1,1 @@
-import CState from './src/api'
-export = CState
+export * from './src/api'
